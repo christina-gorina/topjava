@@ -4,5 +4,10 @@ target
 *.iml
 log
 *.patch
+1_0_rename.patch
+1_1_HW0_streams.patch
+1_2_cycles_HW0.patch
+1_3_opt2_HW0.patch
+prepare_to_HW0_patch.patch
 
 
