@@ -1,52 +1,47 @@
 package ru.javawebinar.topjava.model;
 
+import ru.javawebinar.topjava.util.TimeUtil;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class MealTo {
-    private final LocalDateTime mDateTime;
-
-    private final String mDescription;
-
-    private final int mCalories;
-
-    private final boolean mExcess;
+    private final LocalDateTime dateTime;
+    private final String description;
+    private final int calories;
+    private final boolean excess;
 
     public MealTo(LocalDateTime dateTime, String description, int calories, boolean excess) {
-        mDateTime = dateTime;
-        mDescription = description;
-        mCalories = calories;
-        mExcess = excess;
+        this.dateTime = dateTime;
+        this.description = description;
+        this.calories = calories;
+        this.excess = excess;
     }
 
     public LocalDateTime getDateTime() {
-        return mDateTime;
-    }
-
-    public String getDateTimeFormatted() {
-        return mDateTime.format(DateTimeFormatter.ofPattern("d MMM uuuu HH mm"));
+        return dateTime;
     }
 
     public String getDescription() {
-        return mDescription;
+        return description;
     }
 
     public int getCalories() {
-        return mCalories;
+        return calories;
     }
 
     public boolean isExcess() {
-        return mExcess;
+        return excess;
     }
 
 
     @Override
     public String toString() {
         return "MealTo{" +
-                "dateTime=" + mDateTime +
-                ", description='" + mDescription + '\'' +
-                ", calories=" + mCalories +
-                ", excess=" + mExcess +
+                "dateTime=" + dateTime +
+                ", description='" + description + '\'' +
+                ", calories=" + calories +
+                ", excess=" + excess +
                 '}';
     }
 }
