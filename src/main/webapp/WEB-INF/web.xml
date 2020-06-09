@@ -17,11 +17,11 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>mealController</servlet-name>
-        <servlet-class>ru.javawebinar.topjava.controller.MealController</servlet-class>
+        <servlet-name>mealServlet</servlet-name>
+        <servlet-class>ru.javawebinar.topjava.web.MealServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>mealController</servlet-name>
+        <servlet-name>mealServlet</servlet-name>
         <url-pattern>/meals</url-pattern>
     </servlet-mapping>
 

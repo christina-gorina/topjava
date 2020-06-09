@@ -1,4 +1,16 @@
-.red{color: red;}
-.green{color: green;}
-.meals_table{width: 100%; border-collapse: collapse;}
-    .meals_table thead tr{background-color: darkcyan;}
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
+
+.meals_table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.meals_table thead tr {
+    background-color: darkcyan;
+}

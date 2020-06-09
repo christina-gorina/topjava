@@ -8,36 +8,27 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MealDAOImplImMemory implements MealDAO {
-    private static final AtomicInteger ID = new AtomicInteger(1);
-    private static final Map<Integer, Meal> mealsToStorage = new ConcurrentHashMap<>();
+public class MealDaoInMemory implements MealDao {
+    private final AtomicInteger ID = new AtomicInteger(1);
+    private final Map<Integer, Meal> mealsToStorage = new ConcurrentHashMap<>();
 
     @Override
-    public boolean add(Meal meal) {
-        if(isExist(meal.getId()))
-            return false;
-
+    public Meal add(Meal meal) {
         meal.setId(ID.getAndIncrement());
         mealsToStorage.put(meal.getId(), meal);
-        return true;
+        return meal;
     }
 
     @Override
     public boolean delete(int id) {
-        if(!isExist(id))
-            return false;
-
         mealsToStorage.remove(id);
         return true;
     }
 
     @Override
-    public boolean update(Meal meal) {
-        if(!isExist(meal.getId()))
-            return false;
-
+    public Meal update(Meal meal) {
         mealsToStorage.put(meal.getId(), meal);
-        return true;
+        return meal;
     }
 
     @Override
@@ -48,10 +39,5 @@ public class MealDAOImplImMemory implements MealDAO {
     @Override
     public Meal getById(int id) {
         return mealsToStorage.get(id);
-    }
-
-    @Override
-    public boolean isExist(int id) {
-        return mealsToStorage.containsKey(id);
     }
 }
