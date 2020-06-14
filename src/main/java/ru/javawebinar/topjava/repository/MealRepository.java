@@ -15,4 +15,10 @@ public interface MealRepository {
     Meal get(int id);
 
     Collection<Meal> getAll();
+
+    Collection<Meal> getAllByUserId(int userId);
+
+    Meal getByUserId(int id, int userId);
+
+    boolean deleteByUserId(int id, int userId);
 }
