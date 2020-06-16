@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.util;
 
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,6 +28,12 @@ public class MealsUtil {
         return filterByPredicate(meals, caloriesPerDay, meal -> true);
     }
 
+    public static List<Meal> getFilteredByDay(Collection<Meal> meals, LocalDate startDate, LocalDate endDate) {
+        return meals.stream()
+                .filter(meal -> DateTimeUtil.<LocalDate>isBetweenHalfOpen(meal.getDate(), startDate, endDate))
+                .collect(Collectors.toList());
+    }
+
     public static List<MealTo> getFilteredTos(Collection<Meal> meals, int caloriesPerDay, LocalTime startTime, LocalTime endTime) {
         return filterByPredicate(meals, caloriesPerDay, meal -> DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime));
     }
@@ -47,13 +52,6 @@ public class MealsUtil {
     }
 
     private static MealTo createTo(Meal meal, boolean excess) {
-        return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess, meal.getUserId());
+        return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
-
-    public static Comparator<Meal> mealsDateTimeReversComparator = new Comparator<Meal>() {
-        @Override
-        public int compare(Meal m1, Meal m2) {
-            return m2.getDateTime().compareTo(m1.getDateTime());
-        }
-    };
 }
