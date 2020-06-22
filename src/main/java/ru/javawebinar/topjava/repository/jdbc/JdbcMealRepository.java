@@ -13,7 +13,7 @@ import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository
+@Repository("jdbcMealRepository")
 public class JdbcMealRepository implements MealRepository {
     private static final RowMapper<Meal> ROW_MAPPER = createRowMapper();
 
