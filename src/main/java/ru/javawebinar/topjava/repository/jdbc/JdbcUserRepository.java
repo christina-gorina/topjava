@@ -13,7 +13,7 @@ import ru.javawebinar.topjava.repository.UserRepository;
 
 import java.util.List;
 
-@Repository("jdbcUserRepository")
+@Repository
 public class JdbcUserRepository implements UserRepository {
 
     private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
@@ -69,7 +69,6 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public User getByEmail(String email) {
-//        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
         List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
         return DataAccessUtils.singleResult(users);
     }

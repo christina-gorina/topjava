@@ -4,8 +4,6 @@ import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
@@ -18,6 +16,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -31,7 +30,6 @@ public class MealServiceTest extends TestCase {
     MealService service;
 
     @Autowired
-    @Qualifier("jdbcMealRepository")
     private MealRepository repository;
 
     @Test
@@ -41,24 +39,26 @@ public class MealServiceTest extends TestCase {
         Meal createdMeal = service.create(newMeal, userId);
         Integer newId = createdMeal.getId();
         newMeal.setId(newId);
-        assertEquals(createdMeal, newMeal);
-        assertEquals(service.get(newId, userId), newMeal);
+
+        assertMatch(createdMeal, newMeal);
+        assertMatch(service.get(newId, userId), newMeal);
     }
 
     @Test
     public void get() {
         Meal meal = service.get(ID_USER_MEAL_1, USER_ID);
-        assertEquals(meal, USER_MEAL_1);
+
+        assertMatch(meal, USER_MEAL_1);
     }
 
     @Test
     public void getAlienMeal() {
-        assertThrows(EmptyResultDataAccessException.class, () -> service.get(ID_ADMIN_MEAL_1, USER_ID));
+        assertThrows(NotFoundException.class, () -> service.get(ID_ADMIN_MEAL_1, USER_ID));
     }
 
     @Test
     public void getNotFound() {
-        assertThrows(EmptyResultDataAccessException.class, () -> service.get(NOT_FOUND, ADMIN_ID));
+        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND, ADMIN_ID));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class MealServiceTest extends TestCase {
     @Test
     public void delete() {
         service.delete(ID_USER_MEAL_4, USER_ID);
-        assertThrows(EmptyResultDataAccessException.class, () -> repository.get(ID_USER_MEAL_4, USER_ID));
+        assertNull(repository.get(ID_USER_MEAL_4, USER_ID));
     }
 
     @Test
@@ -93,7 +93,7 @@ public class MealServiceTest extends TestCase {
     public void update() {
         Meal updated = getUpdated();
         service.update(updated, USER_ID);
-        assertEquals(service.get(updated.getId(), USER_ID), updated);
+        assertMatch(service.get(updated.getId(), USER_ID), updated);
     }
 
     @Test

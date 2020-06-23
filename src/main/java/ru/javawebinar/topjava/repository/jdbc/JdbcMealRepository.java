@@ -1,7 +1,8 @@
 package ru.javawebinar.topjava.repository.jdbc;
 
+import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -9,13 +10,13 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
-import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository("jdbcMealRepository")
+@Repository
 public class JdbcMealRepository implements MealRepository {
-    private static final RowMapper<Meal> ROW_MAPPER = createRowMapper();
+
+    private static final BeanPropertyRowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -55,15 +56,16 @@ public class JdbcMealRepository implements MealRepository {
     @Override
     public boolean delete(int id, int userId) {
         String sql = "DELETE FROM meals WHERE id = ? AND user_id = ? ";
-        Object[] args = new Object[] {id, userId};
+        Object[] args = new Object[]{id, userId};
         return jdbcTemplate.update(sql, args) != 0;
     }
 
     @Override
     public Meal get(int id, int userId) {
         String sql = "SELECT * FROM meals WHERE id = ? AND user_id = ? ";
-        Object[] args = new Object[] {id, userId};
-        return jdbcTemplate.queryForObject(sql, args, ROW_MAPPER);
+        Object[] args = new Object[]{id, userId};
+        List<Meal> meal = jdbcTemplate.query(sql, args, ROW_MAPPER);
+        return DataAccessUtils.singleResult(meal);
     }
 
     @Override
@@ -75,24 +77,11 @@ public class JdbcMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDate, LocalDateTime endDate, int userId) {
-        String sql = "SELECT * FROM meals " +
-                "WHERE user_id = ?  " +
-                "AND date_time BETWEEN ? AND ?" +
+        String sql = "SELECT * FROM meals WHERE user_id = ?  " +
+                "AND date_time >= ? " +
+                "AND date_time < ?" +
                 "ORDER BY date_time DESC";
 
-        Object[] args = new Object[] {userId, startDate, endDate};
-        return jdbcTemplate.query(sql, args, ROW_MAPPER);
+        return jdbcTemplate.query(sql, ROW_MAPPER, userId, startDate, endDate);
     }
-
-    private static RowMapper<Meal> createRowMapper() {
-        return (resultSet, i) -> {
-            Integer id = resultSet.getInt("id");
-            LocalDateTime dateTime = resultSet.getTimestamp("date_time").toLocalDateTime();
-            String description = resultSet.getString("description");
-            Integer calories = resultSet.getInt("calories");
-            return new Meal(id, dateTime, description, calories);
-        };
-    }
-
-
 }
