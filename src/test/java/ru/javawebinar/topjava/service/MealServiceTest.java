@@ -1,6 +1,6 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.ClassRule;
+import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Stopwatch;
@@ -34,26 +34,24 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
-    public static Map<String, Long> map = new HashMap<>();
+    private static Map<String, Double> map = new HashMap<>();
     @Rule
     public Stopwatch stopwatchRule = new Stopwatch() {
         protected void finished(long nanos, Description description) {
-            map.put(description.getMethodName(), nanos);
-            log.info("Test with name " + description.getMethodName() + " has taken time = " + nanos + " ns");
+            double ms = nanos * 0.000001;
+            map.put(description.getMethodName(), ms);
+            log.info("Test with name " + description.getMethodName() + " has taken time = " + ms + " ms");
         }
     };
 
-    @ClassRule
-    public static Stopwatch stopwatchClassRule = new Stopwatch() {
-        protected void finished(long nanos, Description description) {
-            log.info("map = " + map);
-            System.out.println("-------------------------");
-            map.forEach((k, v) -> {
-                log.info("Test with name " + k + " has taken time = " + v + " ns");
-            });
-            System.out.println("-------------------------");
-        }
-    };
+    @AfterClass
+    public static void stpWatchFinal() {
+        System.out.println("-------------------------");
+        map.forEach((k, v) -> {
+            log.info(k + "      " + v + " ms");
+        });
+        System.out.println("-------------------------");
+    }
 
     @Autowired
     private MealService service;
@@ -107,9 +105,11 @@ public class MealServiceTest {
         MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), getUpdated());
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void updateNotOwn() {
-        assertThrows(NotFoundException.class, () -> service.update(MEAL1, ADMIN_ID));
+        Meal updated = getUpdated();
+        updated.setId(MEAL1_ID);
+        assertThrows(NotFoundException.class, () -> service.update(updated, ADMIN_ID));
     }
 
     @Test
