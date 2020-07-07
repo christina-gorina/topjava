@@ -1,12 +1,14 @@
 package ru.javawebinar.topjava;
 
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.User;
 
 import java.time.Month;
 import java.util.List;
 
 import static java.time.LocalDateTime.of;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
+import static ru.javawebinar.topjava.UserTestData.ADMIN;
 
 public class MealTestData {
     public static TestMatcher<Meal> MEAL_MATCHER = TestMatcher.usingFieldsComparator("user");
@@ -25,7 +27,9 @@ public class MealTestData {
     public static final Meal ADMIN_MEAL1 = new Meal(ADMIN_MEAL_ID, of(2020, Month.JANUARY, 31, 14, 0), "Админ ланч", 510);
     public static final Meal ADMIN_MEAL2 = new Meal(ADMIN_MEAL_ID + 1, of(2020, Month.JANUARY, 31, 21, 0), "Админ ужин", 1500);
 
+
     public static final List<Meal> MEALS = List.of(MEAL7, MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1);
+    public static final List<Meal> ADMIN_MEALS = List.of(ADMIN_MEAL1, ADMIN_MEAL2);
 
     public static Meal getNew() {
         return new Meal(null, of(2020, Month.FEBRUARY, 1, 18, 0), "Созданный ужин", 300);
@@ -33,5 +37,10 @@ public class MealTestData {
 
     public static Meal getUpdated() {
         return new Meal(MEAL1_ID, MEAL1.getDateTime(), "Обновленный завтрак", 200);
+    }
+
+    public static Meal getWithAdminUser() {
+        ADMIN_MEAL1.setUser(ADMIN);
+        return ADMIN_MEAL1;
     }
 }

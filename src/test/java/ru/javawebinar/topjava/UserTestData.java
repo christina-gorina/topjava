@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.Date;
 
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
+import static ru.javawebinar.topjava.MealTestData.ADMIN_MEALS;
+
 
 public class UserTestData {
     public static TestMatcher<User> USER_MATCHER = TestMatcher.usingFieldsComparator("registered", "roles");
@@ -17,6 +19,13 @@ public class UserTestData {
 
     public static final User USER = new User(USER_ID, "User", "user@yandex.ru", "password", Role.USER);
     public static final User ADMIN = new User(ADMIN_ID, "Admin", "admin@gmail.com", "admin", Role.ADMIN);
+
+    public static User ADMIN_WITH_MEALS = new User(ADMIN_ID, "Admin", "admin@gmail.com", "admin", Role.ADMIN);
+
+    public static User getAdminWithMeals() {
+        ADMIN_WITH_MEALS.setMeals(ADMIN_MEALS);
+        return ADMIN_WITH_MEALS;
+    }
 
     public static User getNew() {
         return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));

@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.service;
 
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles("jdbc")
+@ActiveProfiles("jpa")
 public class MealServiceJdbcTest extends MealServiceTest{
+
 }

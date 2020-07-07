@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -20,7 +19,7 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 public class MealServiceTest extends AbstractServiceTest{
 
     @Autowired
-    private MealService service;
+    protected MealService service;
 
     @Test
     public void delete() throws Exception {
