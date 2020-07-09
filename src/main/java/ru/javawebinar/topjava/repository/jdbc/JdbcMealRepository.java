@@ -1,7 +1,6 @@
 package ru.javawebinar.topjava.repository.jdbc;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -9,25 +8,23 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-@Repository
 public abstract class JdbcMealRepository implements MealRepository {
 
-    protected final static RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
+    private final static RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
 
-    protected final JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-    protected final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    protected final SimpleJdbcInsert insertMeal;
+    private final SimpleJdbcInsert insertMeal;
 
     @Autowired
     public JdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
@@ -57,23 +54,43 @@ public abstract class JdbcMealRepository implements MealRepository {
                 "SELECT * FROM meals WHERE user_id=? ORDER BY date_time DESC", ROW_MAPPER, userId);
     }
 
-    public abstract List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId);
+    @Override
+    public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
 
-    public abstract Meal save(Meal meal, int userId);
+        return jdbcTemplate.query(
+                "SELECT * FROM meals WHERE user_id=?  AND date_time >=  ? AND date_time < ? ORDER BY date_time DESC",
+                ROW_MAPPER, userId,
+                prepareDate(startDateTime, endDateTime).get("startDate"),
+                prepareDate(startDateTime, endDateTime).get("endDate")
+        );
+    }
 
-    protected Meal saveOrUpdate(Meal meal, int userId, MapSqlParameterSource map){
+    public abstract <T> Map<String, T> prepareDate(LocalDateTime startDateTime, LocalDateTime endDateTime);
+
+    public Meal save(Meal meal, int userId){
+        MapSqlParameterSource map = new MapSqlParameterSource()
+                .addValue("id", meal.getId())
+                .addValue("description", meal.getDescription())
+                .addValue("calories", meal.getCalories())
+                .addValue("date_time", Timestamp.valueOf(meal.getDateTime()))
+                .addValue("user_id", userId);
+
+        MapSqlParameterSource nMap = changeMap(map, meal);
+
         if (meal.isNew()) {
-            Number newId = insertMeal.executeAndReturnKey(map);
+            Number newId = insertMeal.executeAndReturnKey(nMap);
             meal.setId(newId.intValue());
         } else {
             if (namedParameterJdbcTemplate.update("" +
                     "UPDATE meals " +
                     "   SET description=:description, calories=:calories, date_time=:date_time " +
-                    " WHERE id=:id AND user_id=:user_id", map) == 0) {
+                    " WHERE id=:id AND user_id=:user_id", nMap) == 0) {
                 return null;
             }
         }
-
         return meal;
     }
+
+    public abstract MapSqlParameterSource changeMap(MapSqlParameterSource map, Meal meal);
+
 }
