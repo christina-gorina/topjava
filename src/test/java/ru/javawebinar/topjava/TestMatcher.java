@@ -1,8 +1,10 @@
 package ru.javawebinar.topjava;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class TestMatcher<T> {
     private final String[] fieldsToIgnore;
@@ -26,4 +28,10 @@ public class TestMatcher<T> {
     public void assertMatch(Iterable<T> actual, Iterable<T> expected) {
         assertThat(actual).usingElementComparatorIgnoringFields(fieldsToIgnore).isEqualTo(expected);
     }
+
+    public void assertMatch(Collection<T> actual, Collection<T> expected) {
+        assertEquals(actual, expected);
+
+    }
+
 }

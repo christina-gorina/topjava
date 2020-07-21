@@ -5,9 +5,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -29,6 +27,7 @@ public class Meal extends AbstractBaseEntity {
 
     @Column(name = "date_time", nullable = false)
     @NotNull
+    @PastOrPresent
     private LocalDateTime dateTime;
 
     @Column(name = "description", nullable = false)
@@ -38,6 +37,8 @@ public class Meal extends AbstractBaseEntity {
 
     @Column(name = "calories", nullable = false)
     @Range(min = 10, max = 5000)
+    @Min(10)
+    @Max(5000)
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)

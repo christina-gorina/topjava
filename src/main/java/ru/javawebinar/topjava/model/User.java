@@ -1,16 +1,16 @@
 package ru.javawebinar.topjava.model;
 
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.validator.constraints.Range;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.validation.constraints.*;
 import java.util.*;
 
 import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
@@ -33,6 +33,7 @@ public class User extends AbstractNamedEntity {
     @Email
     @NotBlank
     @Size(max = 100)
+    @Email
     private String email;
 
     @Column(name = "password", nullable = false)
@@ -41,10 +42,12 @@ public class User extends AbstractNamedEntity {
     private String password;
 
     @Column(name = "enabled", nullable = false, columnDefinition = "bool default true")
+    @NotNull
     private boolean enabled = true;
 
     @Column(name = "registered", nullable = false, columnDefinition = "timestamp default now()")
     @NotNull
+    @PastOrPresent
     private Date registered = new Date();
 
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -58,7 +61,8 @@ public class User extends AbstractNamedEntity {
     private Set<Role> roles;
 
     @Column(name = "calories_per_day", nullable = false, columnDefinition = "int default 2000")
-    @Range(min = 10, max = 10000)
+    @Min(10)
+    @Max(10000)
     private int caloriesPerDay = DEFAULT_CALORIES_PER_DAY;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")//, cascade = CascadeType.REMOVE, orphanRemoval = true)
@@ -108,6 +112,10 @@ public class User extends AbstractNamedEntity {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean getEnabled() {
+        return enabled;
     }
 
     public int getCaloriesPerDay() {

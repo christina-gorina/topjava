@@ -10,6 +10,7 @@ import ru.javawebinar.topjava.web.user.AdminRestController;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class SpringMain {
             appCtx.refresh();
 
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
+
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
             adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ADMIN));
             System.out.println();
@@ -34,6 +36,7 @@ public class SpringMain {
             filteredMealsWithExcess.forEach(System.out::println);
             System.out.println();
             System.out.println(mealController.getBetween(null, null, null, null));
+
         }
     }
 }

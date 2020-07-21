@@ -12,10 +12,8 @@ import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
 import ru.javawebinar.topjava.repository.JpaUtil;
 
 import static org.junit.Assert.assertThrows;
@@ -72,8 +70,9 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test
     public void get() throws Exception {
-        User user = service.get(USER_ID);
-        USER_MATCHER.assertMatch(user, USER);
+        User user = service.get(ADMIN_ID);
+        USER_MATCHER.assertMatch(user, ADMIN);
+        ROLE_MATCHER.assertMatch(user.getRoles(), ADMIN.getRoles());
     }
 
     @Test
