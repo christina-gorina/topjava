@@ -269,6 +269,11 @@
             <artifactId>noty</artifactId>
             <version>${webjars-noty.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.webjars.bower</groupId>
+            <artifactId>datetimepicker</artifactId>
+            <version>2.5.20</version>
+        </dependency>
 
         <!--JSON-->
         <dependency>
