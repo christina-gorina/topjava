@@ -38,9 +38,21 @@ public class UserTestData {
         return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
     }
 
+    public static User getNewWithEmptyName() {
+        return new User(null, "", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
+    }
+
     public static User getUpdated() {
         User updated = new User(USER);
         updated.setName("UpdatedName");
+        updated.setCaloriesPerDay(330);
+        updated.setRoles(Collections.singletonList(Role.ADMIN));
+        return updated;
+    }
+
+    public static User getUpdatedWithEmptyName() {
+        User updated = new User(USER);
+        updated.setName("");
         updated.setCaloriesPerDay(330);
         updated.setRoles(Collections.singletonList(Role.ADMIN));
         return updated;
